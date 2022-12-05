@@ -1,0 +1,119 @@
+<script>
+export default {
+data() {
+return {
+names: [],
+result: "INIT",
+krabbelNames: [],
+nextOne: "<Nobody>",
+showNextOne: false
+}
+},
+props: ['msg'],
+methods: {
+ addInput() {
+  this.names.push("")
+ },
+ deleteName(num) {
+  this.names.splice(num,1)
+ },
+ krabbeln() {
+  if(this.names.length > 0) {
+  let myArray = this.names.slice()
+  let newArray = []
+  //console.log(myArray)
+  //console.log(myArray.length)
+  while(myArray.length > 0) {
+   let idx = Math.floor(Math.random()*myArray.length)
+   newArray.push(myArray[idx])
+   myArray.splice(idx,1)
+  }
+  //console.log(newArray)
+  let strReturn = ""
+  for(let i = 0; i < newArray.length; i++) {
+   strReturn += newArray[i]+"->"
+   //console.log(strReturn)
+  }
+  strReturn += newArray[0]
+  this.result = strReturn
+  this.krabbelNames = newArray.slice()
+  this.showNextOne = true
+  } else {
+  this.result = "Keine Namen eingegeben!"
+  this.showNextOne = true
+  }
+
+},
+ getNext(name) {
+  let j = 0;
+  let newOne = "<Nobody>"
+  for(let i = 0; i < this.krabbelNames.length; i++) {
+   if(this.krabbelNames[i] === name) {
+    j = (i+1) % this.krabbelNames.length
+    newOne = this.krabbelNames[j]
+   }
+  }
+  // this.nextOne = newOne
+  alert(newOne)
+ }
+}
+}
+</script>
+
+<template>
+<!--
+  <div class="greetings">
+    <h1 class="green">{{ msg }}</h1>
+    <h3>
+      You’ve successfully created a project with
+      <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> +
+      <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
+    </h3>
+  </div>
+-->
+<h1 class="green">{{ msg }}</h1><br>
+ <div v-if="!showNextOne">
+ <ul>
+<li v-for="item in names">{{ item }}</li>
+</ul>
+<div v-for="(item,i) in names" :key="i">
+ <input type="text" placeholder="neuer Name" v-model="names[i]">
+ <button @click="deleteName(i)">Name l&ouml;schen</button><br>
+</div>
+  <button @click="addInput">Eingabefeld hizuf&uuml;gen</button>
+<hr>
+<div>
+<button @click="krabbeln">Krabbelsack</button><br>
+</div>
+</div>
+<div v-if="showNextOne">
+{{ result }}<br>
+Naechter Eintrag: <input type="text" v-model="nextOne"><button @click="getNext(nextOne)">Nachfolger</button><br>
+<hr>
+<button @click="showNextOne = false">Zur&uuml;ck</button>
+</div>
+</template>
+
+<style scoped>
+h1 {
+  font-weight: 500;
+  font-size: 2.6rem;
+  top: -10px;
+}
+
+h3 {
+  font-size: 1.2rem;
+}
+
+.greetings h1,
+.greetings h3 {
+  text-align: center;
+}
+
+@media (min-width: 1024px) {
+  .greetings h1,
+  .greetings h3 {
+    text-align: left;
+  }
+}
+</style>
