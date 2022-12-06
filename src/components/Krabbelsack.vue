@@ -3,6 +3,7 @@ export default {
 data() {
 return {
 names: [],
+newName: "",
 result: "INIT",
 krabbelNames: [],
 nextOne: "<Nobody>",
@@ -55,6 +56,28 @@ methods: {
   }
   // this.nextOne = newOne
   alert(newOne)
+ },
+ remove(i) {
+  this.names.splice(i,1)
+ },
+ addName(name) {
+  if(name === "") {
+   alert("Keine leerren Namen bitte!")
+   return
+  }
+  if(!this.contains(name)) {
+  this.names.push(name)
+  this.newName = ""
+  } else {
+   alert(name+" ist bereits vorhanden!")
+  }
+ },
+ contains(name) {
+ let contains = false;
+ for(let i = 0; i < this.names.length; i++) {
+  if(this.names[i] == name) return true
+ }
+ return false
  }
 }
 }
@@ -63,20 +86,22 @@ methods: {
 <template>
  <div v-if="!showNextOne">
  <ul>
-<li v-for="item in names">{{ item }}</li>
+<li v-for="(item,i) in names" :key="i">{{ item }}<button @click="remove(i)">l&ouml;schen</button></li>
 </ul>
-<div v-for="(item,i) in names" :key="i">
+<!-- <div v-for="(item,i) in names" :key="i">
  <input type="text" placeholder="neuer Name" v-model="names[i]">
  <button @click="deleteName(i)">Name l&ouml;schen</button><br>
 </div>
-  <button @click="addInput">Eingabefeld hizuf&uuml;gen</button>
+-->
+<input type="text" placeholder="neuer Name" v-model="newName">&nbsp;&nbsp;
+<button @click="addName(newName)">Hinzuf&uuml;gen</button>
 <hr>
 <div>
 <button @click="krabbeln">Krabbelsack</button><br>
 </div>
 </div>
 <div v-if="showNextOne">
-{{ result }}<br>
+<!-- {{ result }} --><br>
 Naechter Eintrag: <input type="text" v-model="nextOne"><button @click="getNext(nextOne)">Nachfolger</button><br>
 <hr>
 <button @click="showNextOne = false">Zur&uuml;ck</button>
