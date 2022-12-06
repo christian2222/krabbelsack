@@ -10,6 +10,11 @@ nextOne: "<Nobody>",
 showNextOne: false
 }
 },
+computed: {
+ hasNames() {
+  return this.names.length > 0
+ }
+},
 props: ['msg'],
 methods: {
  addInput() {
@@ -18,32 +23,58 @@ methods: {
  deleteName(num) {
   this.names.splice(num,1)
  },
- krabbeln() {
-  if(this.names.length > 0) {
-  let myArray = this.names.slice()
+ permArray(passedArray) {
+  if(passedArray.length > 0) {
+  let myArray = passedArray.slice()
   let newArray = []
-  //console.log(myArray)
-  //console.log(myArray.length)
   while(myArray.length > 0) {
    let idx = Math.floor(Math.random()*myArray.length)
    newArray.push(myArray[idx])
    myArray.splice(idx,1)
   }
-  //console.log(newArray)
-  let strReturn = ""
-  for(let i = 0; i < newArray.length; i++) {
-   strReturn += newArray[i]+"->"
-   //console.log(strReturn)
+  return newArray
+  } else {
+   return passedArray
   }
-  strReturn += newArray[0]
-  this.result = strReturn
-  this.krabbelNames = newArray.slice()
-  this.showNextOne = true
+ },
+ testSelbstschenkung(arrayOne, arrayTwo) {
+  if(arrayOne.length !== arrayTwo.length) return true
+  for(let i = 0; i < arrayOne.length; i++) {
+   if(arrayOne[i] === arrayTwo[i]) return true
+  }
+  return false
+ },
+ zyklenSchenken() {
+  let permutedArray = []
+  if(this.hasNames) {
+   do {
+   permutedArray = this.permArray(this.names)
+   } while(this.testSelbstschenkung(this.names, permutedArray))
+   
+  this.result = this.listSchenkung(this.names, permutedArray)
+  return permutedArray
+  } else return []
+ },
+
+ listSchenkung(arrayOne, arrayTwo) {
+  if(arrayOne.length !== arrayTwo.length) { 
+   alert("Schenkung nicht möglich")
+   return
+  }
+  let output = ""
+  for(let j = 0; j < arrayOne.length; j++) {
+   output += arrayOne[j]+" beschenkt "+arrayTwo[j]+" | "
+  }
+  return output
+ },
+ krabbeln() {
+  if(this.hasNames) {
+  let newArray = this.permArray(this.names)
+  this.krabbelNames = this.zyklenSchenken()
   } else {
   this.result = "Keine Namen eingegeben!"
-  this.showNextOne = true
   }
-
+  this.showNextOne = true
 },
  getNext(name) {
   let j = 0;
@@ -101,7 +132,7 @@ methods: {
 </div>
 </div>
 <div v-if="showNextOne">
-<!-- {{ result }} --><br>
+{{ result }}<br>
 Naechter Eintrag: <input type="text" v-model="nextOne"><button @click="getNext(nextOne)">Nachfolger</button><br>
 <hr>
 <button @click="showNextOne = false">Zur&uuml;ck</button>
