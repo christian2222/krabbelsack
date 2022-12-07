@@ -20,9 +20,6 @@ computed: {
 props: ['msg'],
 
        methods: {
-	       addInput() {
-		       this.names.push("")
-	       },
 
 	       deleteName(num) {
 		       this.names.splice(num,1)
@@ -30,12 +27,12 @@ props: ['msg'],
 
 	       permArray(passedArray) {
 		       if(passedArray.length > 0) {
-			       let myArray = passedArray.slice()
+			       let copiedArray = passedArray.slice()
 				       let newArray = []
 				       while(myArray.length > 0) {
-					       let idx = Math.floor(Math.random()*myArray.length)
-						       newArray.push(myArray[idx])
-						       myArray.splice(idx,1)
+					       let idx = Math.floor(Math.random()*copiedArray.length)
+						       newArray.push(copiedArray[idx])
+						       copiedArray.splice(idx,1)
 				       }
 			       return newArray
 		       } else {
@@ -77,7 +74,6 @@ props: ['msg'],
 
 	       krabbeln() {
 		       if(this.hasNames) {
-			       let newArray = this.permArray(this.names)
 				       this.krabbelNames = this.zyklenSchenken()
 		       } else {
 			       this.result = "Keine Namen eingegeben!"

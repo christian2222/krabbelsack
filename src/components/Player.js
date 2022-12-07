@@ -1,8 +1,8 @@
-class Player {
+export default class Player {
 
 	name:String,
 	shown:Boolean,
-	next: Player
+	//next: Player
 
 	constructor(name) {
 		this.name = name
@@ -18,6 +18,7 @@ class Player {
 		this.name = newName
 	}
 
+	/*
 	get next() {
 		return this.next
 	}
@@ -25,7 +26,7 @@ class Player {
 	set next(nextOne) {
 		this.next = nextOne
 	}
-
+	*/
 	get shown() {
 		return this.shown
 	}
@@ -33,4 +34,4 @@ class Player {
 	set shown(showMe) {
 		this.shown = showMe
 	}
-}
+}	
