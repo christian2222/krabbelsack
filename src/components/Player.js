@@ -18,7 +18,7 @@ export default class Player {
 		this.name = newName
 	}
 
-	/*
+	
 	get next() {
 		return this.next
 	}
@@ -26,7 +26,7 @@ export default class Player {
 	set next(nextOne) {
 		this.next = nextOne
 	}
-	*/
+	
 	get shown() {
 		return this.shown
 	}

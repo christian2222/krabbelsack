@@ -1,13 +1,22 @@
 import Player from './Player.js'
 
 export default class PlayerList {
-	list : []
+	list : [],
+	beschenkt: false
 
 	addName(playerName) {
 		if(!this.containsName(playerName)) {
 			list.push(new Player(playerName))
 			return true
 		} else return false
+	}
+
+	getPlayerByName(name) {
+		Player player = null
+		for(let i = 0; i < this.list.length; i++) {
+			if(this.list[i].name == name) return this.list[i]
+		}
+		return player
 	}
 
 	removeName(playerName) {
@@ -24,6 +33,10 @@ export default class PlayerList {
 		} else return false
 	}
 
+	removeIthElement(i) {
+		this.list.splice(i,1)
+	}
+
 	containsName(playerName) {
 		let contained = false
 		for(let i = 0; i < this.list.length; i++) {
@@ -34,9 +47,18 @@ export default class PlayerList {
 	}
 
 	hasBeenReadByName(playerName) {
+		//if(!this.containsName(playerName)) return false
+		for(let i = 0; i < this.list.length; i++) {
+			if(this.list[i].name == playerName) return list[i].shown
+		}
+		return false
 	}
 
 	setReadByName(playerName, readBoolean) {
+		for(let i = 0; i < this.list.length; i++) {
+			if(this.list[i].name == playerName) list[i].shown = readBoolean
+		}
+
 	}
 
 	createRandomPlayerList() {
@@ -67,7 +89,7 @@ export default class PlayerList {
 		return false
 	}
 
-	zyklenSchenken() {
+	createPermutedList() { //before: zyklenSchenken
 		let permutedList = new PlayerList()
 		if(this.hasElements()) {
 			do {
@@ -76,4 +98,25 @@ export default class PlayerList {
 				return permutedList
 		} else return new PlaerList()
 	}
+
+	createSchenkung(permutedList) { //before listSchenkung
+		if(this.list.length !== permutedList.list.length) {
+			alert("Keine Schenkung möglich!")
+			return
+		}
+		if(!this.hasElements()) {
+			alert("Keine Personen vorhanden!")
+			return
+		}
+
+		let output = ""
+		for(let i = 0; i < this.list.length) {
+			this.list[i].next = permutedList.list[i]
+			output += this.list[i] + " beschenkt " + permutedList.list[i] + " | "
+		}
+		this.beschenkt = true
+		return output
+	}
+
+
 }

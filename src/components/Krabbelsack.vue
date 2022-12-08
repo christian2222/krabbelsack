@@ -1,19 +1,24 @@
 <script>
+import Player from './Player.js'
+import PlayerList from './PlayerList.js'
+
 export default {
 	data() {
 		return {
 names: [],
        newName: "",
        result: "INIT",
-       krabbelNames: [],
-       nextOne: "<Nobody>",
-       showNextOne: false
+       //krabbelNames: [],
+       //nextOne: "<Nobody>",
+       showNextOne: false,
+       playerList: PlayerList,
+       currentPlayer: Player
 		}
 	},
 
 computed: {
 		  hasNames() {
-			  return this.names.length > 0
+			  return this.playerList.hasElements()
 		  }
 	  },
 
@@ -22,59 +27,12 @@ props: ['msg'],
        methods: {
 
 	       deleteName(num) {
-		       this.names.splice(num,1)
-	       },
-
-	       permArray(passedArray) {
-		       if(passedArray.length > 0) {
-			       let copiedArray = passedArray.slice()
-				       let newArray = []
-				       while(myArray.length > 0) {
-					       let idx = Math.floor(Math.random()*copiedArray.length)
-						       newArray.push(copiedArray[idx])
-						       copiedArray.splice(idx,1)
-				       }
-			       return newArray
-		       } else {
-			       return passedArray
-		       }
-	       },
-
-	       testSelbstschenkung(arrayOne, arrayTwo) {
-		       if(arrayOne.length !== arrayTwo.length) return true
-			       for(let i = 0; i < arrayOne.length; i++) {
-				       if(arrayOne[i] === arrayTwo[i]) return true
-			       }
-		       return false
-	       },
-
-	       zyklenSchenken() {
-		       let permutedArray = []
-			       if(this.hasNames) {
-				       do {
-					       permutedArray = this.permArray(this.names)
-				       } while(this.testSelbstschenkung(this.names, permutedArray))
-
-				       this.result = this.listSchenkung(this.names, permutedArray)
-					       return permutedArray
-			       } else return []
-	       },
-
-	       listSchenkung(arrayOne, arrayTwo) {
-		       if(arrayOne.length !== arrayTwo.length) { 
-			       alert("Schenkung nicht möglich")
-				       return
-		       }
-		       let output = ""
-			       for(let j = 0; j < arrayOne.length; j++) {
-				       output += arrayOne[j]+" beschenkt "+arrayTwo[j]+" | "
-			       }
-		       return output
+		       this.playerList.removeIthElement(num)
 	       },
 
 	       krabbeln() {
-		       if(this.hasNames) {
-				       this.krabbelNames = this.zyklenSchenken()
+		       if(this.playerList.hasElements()) {
+				       this.playerList.createSchenkung(this.playerList.createPermutedList())
 		       } else {
 			       this.result = "Keine Namen eingegeben!"
 		       }
@@ -84,17 +42,13 @@ props: ['msg'],
 	       getNextName(name) {
 		       let j = 0;
 		       let newOne = "<Nobody>"
-			       for(let i = 0; i < this.krabbelNames.length; i++) {
-				       if(this.krabbelNames[i] === name) {
-					       j = (i+1) % this.krabbelNames.length
-						       newOne = this.krabbelNames[j]
-				       }
-			       }
+		       Player player = this.playlerList.getPlayerByName(name)
+		       if( (player != null) && (player.next != null) ) nowOne = player.next.name
 		       alert(newOne)
 	       },
 
 	       removeIthElement(i) {
-		       this.names.splice(i,1)
+		       this.playerList.removeIthElement(i)
 	       },
 
 	       addNameToList(name) {
@@ -102,8 +56,8 @@ props: ['msg'],
 			       alert("Keine leerren Namen bitte!")
 				       return
 		       }
-		       if(!this.contains(name)) {
-			       this.names.push(name)
+		       if(!this.playerList.contains(name)) {
+			       this.playerList.adddName(name)
 				       this.newName = ""
 		       } else {
 			       alert(name+" ist bereits vorhanden!")
@@ -111,11 +65,7 @@ props: ['msg'],
 	       },
 
 	       contains(name) {
-		       let contains = false;
-		       for(let i = 0; i < this.names.length; i++) {
-			       if(this.names[i] == name) return true
-		       }
-		       return false
+		       return this.playerList.containsName(name)
 	       }
        }
 }
