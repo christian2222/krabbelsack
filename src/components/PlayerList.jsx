@@ -1,8 +1,8 @@
 import Player from './Player.jsx'
 
 export default class PlayerList {
-	list
-	beschenkt
+	list=[]
+	beschenkt=false
 	
 	construct() {
 		this.list = []
@@ -11,7 +11,7 @@ export default class PlayerList {
 
 	addName(playerName) {
 		if(!this.containsName(playerName)) {
-			list.push(new Player(playerName))
+			this.list.push(new Player(playerName))
 			return true
 		} else return false
 	}
@@ -26,8 +26,8 @@ export default class PlayerList {
 
 	removeName(playerName) {
 		let removeIdx = null
-		for(let i = 0; i < list.length; i++) {
-			if(list[i].name == playerName) {
+		for(let i = 0; i < this.list.length; i++) {
+			if(this.list[i].name == playerName) {
 				removeIdx = i	
 			}
 		}
@@ -45,7 +45,7 @@ export default class PlayerList {
 	containsName(playerName) {
 		let contained = false
 		for(let i = 0; i < this.list.length; i++) {
-			if(list[i].name == playerName) contained = true
+			if(this.list[i].name == playerName) contained = true
 		}
 
 		return contained
@@ -68,18 +68,38 @@ export default class PlayerList {
 
 	createRandomPlayerList() {
 		if(this.hasElements()) {
-			
-			let copyList = this.slice()
+			// how to clone an object with methods
+			// I don't need an proxy object here
+			// but an object with same properties and methods
+			let copy = this.cloneNextFree()
 			let newList = new PlayerList()
-			while(copyList.hasElements()) {
-				let randomIdx = Math.floor(Math.random()*copyList.length)
-				let randomPlayerName = copiedList.list[randomIdx].name
+			while(copy.hasElements()) {
+				let randomIdx = Math.floor(Math.random()*copy.list.length)
+				//console.log(copyList.list)
+				//console.log(copyList.list[0].name)
+				//console.log(randomIdx)
+				//console.log(copyList[randomIdx])
+				let randomPlayerName = copy.list[randomIdx].name
 				newList.addName(randomPlayerName)
-				copiedList.removeName(randomPlayerName)
+				copy.removeName(randomPlayerName)
 			}
 			return newList
 
 		} else return new PlayerList()
+	}
+
+	cloneNextFree() {
+		let clonedList = new PlayerList()
+		clonedList.beschenkt = this.beschenkt
+		for(let i = 0; i < this.list.length; i++) {
+			let player = new Player()
+			player.name = this.list[i].name
+			player.shown = this.list[i].shown
+			player.next = null
+			clonedList.list.push(player)
+		}
+
+		return clonedList
 	}
 
 	hasElements() {
@@ -89,19 +109,23 @@ export default class PlayerList {
 	testSelbstbeschenkung(otherList) {
 		if(this.list.length !== otherList.list.length) return true
 		for(let i = 0; i < this.list.length; i++){
-			if(this.list[i].name === otherList[i].name) return true
+			if(this.list[i].name === otherList.list[i].name) return true
 		}
 		return false
 	}
 
+	hasMoreThanOneElement() {
+		return this.list.length > 1
+	}
+
 	createPermutedList() { //before: zyklenSchenken
 		let permutedList = new PlayerList()
-		if(this.hasElements()) {
+		if(this.hasMoreThanOneElement()) {
 			do {
 				permutedList = this.createRandomPlayerList()
 			} while(this.testSelbstbeschenkung(permutedList))
 				return permutedList
-		} else return new PlaerList()
+		} else return new PlayerList()
 	}
 
 	createSchenkung(permutedList) { //before listSchenkung
@@ -117,7 +141,7 @@ export default class PlayerList {
 		let output = ""
 		for(let i = 0; i < this.list.length; i++) {
 			this.list[i].next = permutedList.list[i]
-			output += this.list[i] + " beschenkt " + permutedList.list[i] + " | "
+			output += this.list[i].name + " beschenkt " + permutedList.list[i].name + " | "
 		}
 		this.beschenkt = true
 		return output

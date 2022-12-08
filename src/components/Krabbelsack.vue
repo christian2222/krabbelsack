@@ -9,9 +9,9 @@ names: [],
        newName: "",
        result: "INIT",
        //krabbelNames: [],
-       //nextOne: "<Nobody>",
+       nextOne: "<Nobody>",
        showNextOne: false,
-       playerList: PlayerList
+       playerList: new PlayerList()
        //currentPlayer: Player
 		}
 	},
@@ -38,8 +38,8 @@ props: ['msg'],
 	       getNextName(name) {
 		       let j = 0
 		       let newOne = "<Nobody>"
-		       let player = this.playlerList.getPlayerByName(name)
-		       if( (player != null) && (player.next != null) ) nowOne = player.next.name
+		       let player = this.playerList.getPlayerByName(name)
+		       if( (player != null) && (player.next != null) ) newOne = player.next.name
 		       alert(newOne)
 	       },
 
@@ -50,7 +50,7 @@ props: ['msg'],
 				       return
 		       }
 		       if(!this.playerList.containsName(addName)) {
-			       this.playerList.adddName(addName)
+			       this.playerList.addName(addName)
 				       this.newName = ""
 		       } else {
 			       alert(addName+" ist bereits vorhanden!")
@@ -64,7 +64,7 @@ props: ['msg'],
 <template>
 <div v-if="!showNextOne">
 <ul>
-<li v-for="(player,i) in this.playerList" :key="i">{{ player.name }}<button @click="this.playerList.removeIthElement(i)">l&ouml;schen</button></li>
+<li v-for="(player,i) in this.playerList.list" :key="i">{{ player.name }}<button @click="this.playerList.removeIthElement(i)">l&ouml;schen</button></li>
 </ul>
 <!-- <div v-for="(item,i) in names" :key="i">
 <input type="text" placeholder="neuer Name" v-model="names[i]">
