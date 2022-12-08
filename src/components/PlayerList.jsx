@@ -1,8 +1,13 @@
-import Player from './Player.js'
+import Player from './Player.jsx'
 
 export default class PlayerList {
-	list : [],
-	beschenkt: false
+	list
+	beschenkt
+	
+	construct() {
+		this.list = []
+		this.beschenkt = false
+	}
 
 	addName(playerName) {
 		if(!this.containsName(playerName)) {
@@ -12,7 +17,7 @@ export default class PlayerList {
 	}
 
 	getPlayerByName(name) {
-		Player player = null
+		let player = null
 		for(let i = 0; i < this.list.length; i++) {
 			if(this.list[i].name == name) return this.list[i]
 		}
@@ -81,7 +86,7 @@ export default class PlayerList {
 		return this.list.length > 0
 	}
 
-	testSelbstbeschenkung(PlayerList otherList) {
+	testSelbstbeschenkung(otherList) {
 		if(this.list.length !== otherList.list.length) return true
 		for(let i = 0; i < this.list.length; i++){
 			if(this.list[i].name === otherList[i].name) return true
@@ -94,7 +99,7 @@ export default class PlayerList {
 		if(this.hasElements()) {
 			do {
 				permutedList = this.createRandomPlayerList()
-			} while(this.testSelbstbeschenkung(permutedList)
+			} while(this.testSelbstbeschenkung(permutedList))
 				return permutedList
 		} else return new PlaerList()
 	}
@@ -110,7 +115,7 @@ export default class PlayerList {
 		}
 
 		let output = ""
-		for(let i = 0; i < this.list.length) {
+		for(let i = 0; i < this.list.length; i++) {
 			this.list[i].next = permutedList.list[i]
 			output += this.list[i] + " beschenkt " + permutedList.list[i] + " | "
 		}

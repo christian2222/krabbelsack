@@ -1,8 +1,8 @@
 export default class Player {
 
-	name:String,
-	shown:Boolean,
-	//next: Player
+	name
+	shown
+	next
 
 	constructor(name) {
 		this.name = name

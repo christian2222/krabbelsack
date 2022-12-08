@@ -1,6 +1,6 @@
 <script>
-import Player from './Player.js'
-import PlayerList from './PlayerList.js'
+import Player from './Player.jsx'
+import PlayerList from './PlayerList.jsx'
 
 export default {
 	data() {
@@ -11,8 +11,8 @@ names: [],
        //krabbelNames: [],
        //nextOne: "<Nobody>",
        showNextOne: false,
-       playerList: PlayerList,
-       currentPlayer: Player
+       playerList: PlayerList
+       //currentPlayer: Player
 		}
 	},
 
@@ -26,13 +26,9 @@ props: ['msg'],
 
        methods: {
 
-	       deleteName(num) {
-		       this.playerList.removeIthElement(num)
-	       },
-
 	       krabbeln() {
 		       if(this.playerList.hasElements()) {
-				       this.playerList.createSchenkung(this.playerList.createPermutedList())
+				       this.result = this.playerList.createSchenkung(this.playerList.createPermutedList())
 		       } else {
 			       this.result = "Keine Namen eingegeben!"
 		       }
@@ -40,33 +36,27 @@ props: ['msg'],
 	       },
 
 	       getNextName(name) {
-		       let j = 0;
+		       let j = 0
 		       let newOne = "<Nobody>"
-		       Player player = this.playlerList.getPlayerByName(name)
+		       let player = this.playlerList.getPlayerByName(name)
 		       if( (player != null) && (player.next != null) ) nowOne = player.next.name
 		       alert(newOne)
 	       },
 
-	       removeIthElement(i) {
-		       this.playerList.removeIthElement(i)
-	       },
 
-	       addNameToList(name) {
-		       if(name === "") {
+	       addNameToList(addName) {
+		       if(addName === "") {
 			       alert("Keine leerren Namen bitte!")
 				       return
 		       }
-		       if(!this.playerList.contains(name)) {
-			       this.playerList.adddName(name)
+		       if(!this.playerList.containsName(addName)) {
+			       this.playerList.adddName(addName)
 				       this.newName = ""
 		       } else {
-			       alert(name+" ist bereits vorhanden!")
+			       alert(addName+" ist bereits vorhanden!")
 		       }
 	       },
 
-	       contains(name) {
-		       return this.playerList.containsName(name)
-	       }
        }
 }
 </script>
@@ -74,7 +64,7 @@ props: ['msg'],
 <template>
 <div v-if="!showNextOne">
 <ul>
-<li v-for="(item,i) in names" :key="i">{{ item }}<button @click="removeIthElement(i)">l&ouml;schen</button></li>
+<li v-for="(player,i) in this.playerList" :key="i">{{ player.name }}<button @click="this.playerList.removeIthElement(i)">l&ouml;schen</button></li>
 </ul>
 <!-- <div v-for="(item,i) in names" :key="i">
 <input type="text" placeholder="neuer Name" v-model="names[i]">
