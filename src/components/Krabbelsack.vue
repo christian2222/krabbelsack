@@ -1,6 +1,7 @@
 <script>
 import Player from './Player.jsx'
 import PlayerList from './PlayerList.jsx'
+import ModalNext from './ModalNext.vue'
 
 export default {
 	data() {
@@ -11,10 +12,14 @@ names: [],
        //krabbelNames: [],
        nextOne: "<Nobody>",
        showNextOne: false,
-       playerList: new PlayerList()
+       playerList: new PlayerList(),
+       isModalVisible: false
        //currentPlayer: Player
 		}
 	},
+components: {
+  ModalNext
+},
 
 computed: {
 		  hasNames() {
@@ -81,6 +86,12 @@ props: ['msg'],
 <div v-if="showNextOne">
 {{ result }}<br>
 Naechter Eintrag: <input type="text" v-model="nextOne"><button @click="getNextName(nextOne)">Nachfolger</button><br>
+<ul>
+<li v-for="(player,i) in this.playerList.list" :key="i">
+<button @click="this.isModalVisible = true && !player.shown">{{ player.name }}</button>
+<ModalNext v-show="this.isModalVisible" @close="this.isModalVisible = false" :showName="player.name" :isChekced="player.shown" />
+</li>
+</ul>
 <hr>
 <button @click="showNextOne = false">Zur&uuml;ck</button>
 </div>
