@@ -61,7 +61,7 @@ export default class PlayerList {
 
 	setReadByName(playerName, readBoolean) {
 		for(let i = 0; i < this.list.length; i++) {
-			if(this.list[i].name == playerName) list[i].shown = readBoolean
+			if(this.list[i].name == playerName) this.list[i].shown = readBoolean
 		}
 
 	}

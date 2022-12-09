@@ -31,6 +31,11 @@ props: ['msg'],
 
        methods: {
 
+	       addDummies() {
+                 this.playerList.addName("ich")
+		 this.playerList.setReadByName("ich",true)
+                 this.playerList.addName("du")
+	       },
 	       krabbeln() {
 		       if(this.playerList.hasElements()) {
 				       this.result = this.playerList.createSchenkung(this.playerList.createPermutedList())
@@ -62,6 +67,11 @@ props: ['msg'],
 		       }
 	       },
 
+		modalCallback(playerName, isChecked) {
+			if(this.playerList.containsName(playerName)) this.playerList.setReadByName(playerName, isChecked)	
+			this.isModalVisible = false
+		}
+
        }
 }
 </script>
@@ -77,7 +87,8 @@ props: ['msg'],
 </div>
 -->
 <span><input type="text" placeholder="neuer Name" v-model="newName"></span>
-<span><button @click="addNameToList(newName)">Hinzuf&uuml;gen</button></span>
+<span><button @click="addNameToList(newName)">Hinzuf&uuml;gen</button></span><br>
+<button @click="addDummies()">Dummies</button>
 <hr>
 <div>
 <button @click="krabbeln">Krabbelsack</button><br>
@@ -88,8 +99,9 @@ props: ['msg'],
 Naechter Eintrag: <input type="text" v-model="nextOne"><button @click="getNextName(nextOne)">Nachfolger</button><br>
 <ul>
 <li v-for="(player,i) in this.playerList.list" :key="i">
-<button @click="this.isModalVisible = true && !player.shown">{{ player.name }}</button>
-<ModalNext v-show="this.isModalVisible" @close="this.isModalVisible = false" :showName="player.name" :isChekced="player.shown" />
+<button @click="this.isModalVisible = !player.shown">{{ player.name }}</button>
+<!-- <ModalNext v-show="this.isModalVisible" @close="modalCallback(player.name, player.shown)" :showName="player.name" :isChecked="player.shown" /> -->
+<ModalNext v-show="this.isModalVisible" @close="this.isModalVisible = false" :player="player" />
 </li>
 </ul>
 <hr>
