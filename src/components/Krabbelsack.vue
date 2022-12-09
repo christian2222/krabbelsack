@@ -35,6 +35,10 @@ props: ['msg'],
                  this.playerList.addName("ich")
 		 this.playerList.setReadByName("ich",true)
                  this.playerList.addName("du")
+                 this.playerList.addName("er")
+                 this.playerList.addName("sie")
+		 this.playerList.setReadByName("sie",true)
+                 this.playerList.addName("es")
 	       },
 	       krabbeln() {
 		       if(this.playerList.hasElements()) {
@@ -101,7 +105,7 @@ Naechter Eintrag: <input type="text" v-model="nextOne"><button @click="getNextNa
 <li v-for="(player,i) in this.playerList.list" :key="i">
 <button @click="this.isModalVisible = !player.shown">{{ player.name }}</button>
 <!-- <ModalNext v-show="this.isModalVisible" @close="modalCallback(player.name, player.shown)" :showName="player.name" :isChecked="player.shown" /> -->
-<ModalNext v-show="this.isModalVisible" @close="this.isModalVisible = false" :player="player" />
+<ModalNext v-show="this.isModalVisible" @changeTo="modalCallback" :playerName="player.name" :playerShown="player.shown" :nextPlayerName="player.next.name" />
 </li>
 </ul>
 <hr>
