@@ -20,9 +20,6 @@ methods: {
 <div class="modal">
 {{ playerName }} beschenkt {{ nextPlayerName }}<br>
 <input type="checkbox" v-model="theCheckboxValue" checked="playerShown" name="box"><label for="box">gesehen</label><br>
-<!-- works but bad 
-<input type="checkbox" v-model="player.shown" name="box"><label for="box">gesehen</label><br> -->
-<!-- <button type="button" class="btn-green" @click="this.$emit(showName, isChecked)">Beenden</button> -->
 <button type="button" class="btn-green" @click="changeTo(playeName, theCheckboxValue)">Beenden</button>
 </div>
 </template>

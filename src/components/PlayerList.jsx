@@ -71,14 +71,11 @@ export default class PlayerList {
 			// how to clone an object with methods
 			// I don't need an proxy object here
 			// but an object with same properties and methods
+			// -> see implementation of cloneNextFree
 			let copy = this.cloneNextFree()
 			let newList = new PlayerList()
 			while(copy.hasElements()) {
 				let randomIdx = Math.floor(Math.random()*copy.list.length)
-				//console.log(copyList.list)
-				//console.log(copyList.list[0].name)
-				//console.log(randomIdx)
-				//console.log(copyList[randomIdx])
 				let randomPlayerName = copy.list[randomIdx].name
 				newList.addName(randomPlayerName)
 				copy.removeName(randomPlayerName)
@@ -118,7 +115,7 @@ export default class PlayerList {
 		return this.list.length > 1
 	}
 
-	createPermutedList() { //before: zyklenSchenken
+	createPermutedList() {
 		let permutedList = new PlayerList()
 		if(this.hasMoreThanOneElement()) {
 			do {
@@ -128,7 +125,7 @@ export default class PlayerList {
 		} else return new PlayerList()
 	}
 
-	createSchenkung(permutedList) { //before listSchenkung
+	createSchenkung(permutedList) {
 		if(this.list.length !== permutedList.list.length) {
 			alert("Keine Schenkung möglich!")
 			return

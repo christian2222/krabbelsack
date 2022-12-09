@@ -9,12 +9,10 @@ export default {
 names: [],
        newName: "",
        result: "INIT",
-       //krabbelNames: [],
        nextOne: "<Nobody>",
        showNextOne: false,
        playerList: new PlayerList(),
        isModalVisible: false
-       //currentPlayer: Player
 		}
 	},
 components: {
@@ -55,6 +53,7 @@ props: ['msg'],
 		       let player = this.playerList.getPlayerByName(name)
 		       if( (player != null) && (player.next != null) ) newOne = player.next.name
 		       alert(newOne)
+		       player.shown = true
 	       },
 
 
@@ -104,8 +103,7 @@ Naechter Eintrag: <input type="text" v-model="nextOne"><button @click="getNextNa
 <ul>
 <li v-for="(player,i) in this.playerList.list" :key="i">
 <button @click="this.isModalVisible = !player.shown">{{ player.name }}</button>
-<!-- <ModalNext v-show="this.isModalVisible" @close="modalCallback(player.name, player.shown)" :showName="player.name" :isChecked="player.shown" /> -->
-<ModalNext v-show="this.isModalVisible" @changeTo="modalCallback" :playerName="player.name" :playerShown="player.shown" :nextPlayerName="player.next.name" />
+<ModalNext v-show="!player.shown" @changeTo="modalCallback" :playerName="player.name" :playerShown="player.shown" :nextPlayerName="player.next.name" />
 </li>
 </ul>
 <hr>
