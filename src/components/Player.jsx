@@ -2,12 +2,14 @@ export default class Player {
 
 	name
 	shown
+	seen
 	next
 
 	constructor(name) {
 		this.name = name
 		this.next = null
 		this.shown = false
+		this.seen = false
 	}
 
 	get name() {
@@ -34,4 +36,12 @@ export default class Player {
 	set shown(showMe) {
 		this.shown = showMe
 	}
-}	
+
+	get seen() {
+		return this.seen
+	}
+
+	set seen(reallySeen) {
+		this.seen = reallySeen
+	}
+}

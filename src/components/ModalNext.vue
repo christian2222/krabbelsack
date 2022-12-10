@@ -3,14 +3,14 @@ export default {
 name: 'ModalNext',
 data() {
 return {
- theCheckboxValue: this.playerShown
+ theCheckboxValue: this.player.shown
 }
 },
-props: ['playerName','playerShown','nextPlayerName'],
+props: ['player'],
 
 methods: {
  changeTo() {
-  this.$emit('changeTo', this.playerName, this.theCheckboxValue)
+  this.$emit('changeTo', this.player, this.theCheckboxValue)
  }
 }
 }
@@ -18,8 +18,8 @@ methods: {
 
 <template>
 <div class="modal">
-{{ playerName }} beschenkt {{ nextPlayerName }}<br>
-<input type="checkbox" v-model="theCheckboxValue" checked="playerShown" name="box"><label for="box">gesehen</label><br>
-<button type="button" class="btn-green" @click="changeTo(playeName, theCheckboxValue)">Beenden</button>
+{{ player.name }} beschenkt {{ player.next.name }}<br>
+<input type="checkbox" v-model="theCheckboxValue" checked="player.shown" name="box"><label for="box">gesehen</label><br>
+<button type="button" class="btn-green" @click="changeTo(player, theCheckboxValue)">Beenden</button>
 </div>
 </template>

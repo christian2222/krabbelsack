@@ -11,8 +11,7 @@ names: [],
        result: "INIT",
        nextOne: "<Nobody>",
        showNextOne: false,
-       playerList: new PlayerList(),
-       isModalVisible: false
+       playerList: new PlayerList()
 		}
 	},
 components: {
@@ -38,6 +37,7 @@ props: ['msg'],
 		 this.playerList.setReadByName("sie",true)
                  this.playerList.addName("es")
 	       },
+
 	       krabbeln() {
 		       if(this.playerList.hasElements()) {
 				       this.result = this.playerList.createSchenkung(this.playerList.createPermutedList())
@@ -70,8 +70,9 @@ props: ['msg'],
 		       }
 	       },
 
-		modalCallback(playerName, isChecked) {
-			if(this.playerList.containsName(playerName)) this.playerList.setReadByName(playerName, isChecked)	
+		modalCallback(player, isChecked) {
+			player.shown = isChecked
+			player.seen = true
 			this.isModalVisible = false
 		}
 
@@ -102,8 +103,8 @@ props: ['msg'],
 Naechter Eintrag: <input type="text" v-model="nextOne"><button @click="getNextName(nextOne)">Nachfolger</button><br>
 <ul>
 <li v-for="(player,i) in this.playerList.list" :key="i">
-<button @click="this.isModalVisible = !player.shown">{{ player.name }}</button>
-<ModalNext v-show="!player.shown" @changeTo="modalCallback" :playerName="player.name" :playerShown="player.shown" :nextPlayerName="player.next.name" />
+<button @click="player.seen = true">{{ player.name }}</button>
+<ModalNext v-show="!player.seen || !player.shown" @changeTo="modalCallback" :player="player" />
 </li>
 </ul>
 <hr>
