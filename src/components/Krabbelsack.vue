@@ -21,7 +21,10 @@ components: {
 computed: {
 		  hasNames() {
 			  return this.playerList.hasElements()
-		  }
+		  },
+          anyPlayerIsShown() {
+              return this.playerList.list.find(el => el.shown === true) !== undefined
+          }
 	  },
 
 props: ['msg'],
@@ -30,11 +33,11 @@ props: ['msg'],
 
 	       addDummies() {
                  this.playerList.addName("ich")
-		 this.playerList.setReadByName("ich",true)
+	//	 this.playerList.setReadByName("ich",true)
                  this.playerList.addName("du")
                  this.playerList.addName("er")
                  this.playerList.addName("sie")
-		 this.playerList.setReadByName("sie",true)
+	//	 this.playerList.setReadByName("sie",true)
                  this.playerList.addName("es")
 	       },
 
@@ -70,10 +73,9 @@ props: ['msg'],
 		       }
 	       },
 
-		modalCallback(player, isChecked) {
-			player.shown = isChecked
+		modalCallback(player) {
+			player.shown = false
 			player.seen = true
-			this.isModalVisible = false
 		}
 
        }
@@ -103,8 +105,8 @@ props: ['msg'],
 Naechter Eintrag: <input type="text" v-model="nextOne"><button @click="getNextName(nextOne)">Nachfolger</button><br>
 <ul>
 <li v-for="(player,i) in this.playerList.list" :key="i">
-<button @click="player.seen = true">{{ player.name }}</button>
-<ModalNext v-show="!player.seen || !player.shown" @changeTo="modalCallback" :player="player" />
+<button @click="player.shown=true" :disabled="player.seen === true || anyPlayerIsShown" :class="{seen: player.seen}">{{ player.name }}</button>
+<ModalNext v-show="player.shown" @changeTo="modalCallback" :player="player" />
 </li>
 </ul>
 <hr>
@@ -113,4 +115,7 @@ Naechter Eintrag: <input type="text" v-model="nextOne"><button @click="getNextNa
 </template>
 
 <style scoped>
+.seen {
+   background-color: red;
+   }
 </style>
