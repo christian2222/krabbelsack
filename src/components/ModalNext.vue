@@ -2,6 +2,7 @@
 export default {
 name: 'ModalNext',
 data() {
+return {}
 },
 props: ['player'],
 

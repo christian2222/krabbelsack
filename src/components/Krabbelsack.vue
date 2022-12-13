@@ -76,6 +76,17 @@ props: ['msg'],
 		modalCallback(player) {
 			player.shown = false
 			player.seen = true
+		},
+
+		resetPlayer(currentPlayer) {
+			currentPlayer.shown = false
+			currentPlayer.seen = false
+			currentPlayer.next = null
+		},
+
+		backToStart() {
+			this.playerList.list.forEach(this.resetPlayer)
+			this.showNextOne = false
 		}
 
        }
@@ -84,6 +95,7 @@ props: ['msg'],
 
 <template>
 <div v-if="!showNextOne">
+<h1 class="text-3xl font-bold underline bg-blue-500">Tailwind</h1>
 <ul>
 <li v-for="(player,i) in this.playerList.list" :key="i">{{ player.name }}<button @click="this.playerList.removeIthElement(i)">l&ouml;schen</button></li>
 </ul>
@@ -110,7 +122,7 @@ Naechter Eintrag: <input type="text" v-model="nextOne"><button @click="getNextNa
 </li>
 </ul>
 <hr>
-<button @click="showNextOne = false">Zur&uuml;ck</button>
+<button @click="backToStart()">Zur&uuml;ck</button>
 </div>
 </template>
 
