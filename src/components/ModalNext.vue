@@ -15,8 +15,8 @@ methods: {
 </script>
 
 <template>
-<div class="modal">
+<span>
 {{ player.name }} beschenkt {{ player.next.name }}
-<button type="button" class="btn-green" @click="changeTo(player)">gesehen!</button>
-</div>
+<button @click="changeTo(player)">gesehen!</button>
+</span>
 </template>
