@@ -8,7 +8,7 @@ import Krabbelsack from './components/Krabbelsack.vue'
 
   <main>
     <div class="container mx-auto">
-    <h1 class="green">Krabbelsack</h1>
+    <h1 class="text-3xl mb-2">Krabbelsack</h1>
       <Krabbelsack />
     </div>
 </main>

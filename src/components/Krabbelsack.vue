@@ -11,7 +11,8 @@ names: [],
        result: "INIT",
        nextOne: "<Nobody>",
        showNextOne: false,
-       playerList: new PlayerList()
+       playerList: new PlayerList(),
+       showDebug: false
 		}
 	},
 components: {
@@ -95,39 +96,34 @@ props: ['msg'],
 
 <template>
 <div v-if="!showNextOne">
-<h1 class="text-3xl font-bold underline bg-blue-500">Tailwind</h1>
 <ul>
-<li v-for="(player,i) in this.playerList.list" :key="i">{{ player.name }}<button @click="this.playerList.removeIthElement(i)">l&ouml;schen</button></li>
+<li v-for="(player,i) in this.playerList.list" :key="i" class="my-2">{{ player.name }}<button @click="this.playerList.removeIthElement(i)" class="mx-2">l&ouml;schen</button></li>
 </ul>
 <!-- <div v-for="(item,i) in names" :key="i">
 <input type="text" placeholder="neuer Name" v-model="names[i]">
 <button @click="deleteName(i)">Name l&ouml;schen</button><br>
 </div>
 -->
-<span><input type="text" placeholder="neuer Name" v-model="newName"></span>
-<span><button @click="addNameToList(newName)">Hinzuf&uuml;gen</button></span><br>
-<button @click="addDummies()">Dummies</button>
-<hr>
-<div>
-<button @click="krabbeln">Krabbelsack</button><br>
+<div class="my-2">
+<span><input type="text" placeholder="neuer Name" v-model="newName" class="border rounded p-1"></span>
+<span><button @click="addNameToList(newName)" class="mx-2">Hinzuf&uuml;gen</button></span>
 </div>
+<div>
+<button @click="krabbeln">Krabbelsack</button>
+</div>
+<button @click="addDummies()" class="mt-4">Debug: Dummies</button>
 </div>
 <div v-if="showNextOne">
-{{ result }}<br>
-Naechter Eintrag: <input type="text" v-model="nextOne"><button @click="getNextName(nextOne)">Nachfolger</button><br>
 <ul>
-<li v-for="(player,i) in this.playerList.list" :key="i">
-<button @click="player.shown=true" :disabled="player.seen === true || anyPlayerIsShown" :class="{seen: player.seen}">{{ player.name }}</button>
+<li v-for="(player,i) in this.playerList.list" :key="i" class="my-2">
+<span :class="{'bg-red-300': player.seen}">{{ player.name }}</span> <button @click="player.shown=true" :disabled="player.seen === true || anyPlayerIsShown">anschauen</button>
 <ModalNext v-show="player.shown" @changeTo="modalCallback" :player="player" />
 </li>
 </ul>
-<hr>
 <button @click="backToStart()">Zur&uuml;ck</button>
+<div class="mt-4">
+<button @click="showDebug=!showDebug">Debug: Result</button>
+<div v-if="showDebug">{{result}}</div>
+</div>
 </div>
 </template>
-
-<style scoped>
-.seen {
-   background-color: red;
-   }
-</style>
