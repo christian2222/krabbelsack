@@ -20,8 +20,8 @@ methods: {
 </script>
 
 <template>
-<span>
+<div>
 {{ player.name }} beschenkt <strong>{{ player.next.name }}</strong>
 <button @click="changeTo(player)" class="mx-2"><IconCheck class="w-4 h-4"/></button>
-</span>
+</div>
 </template>
