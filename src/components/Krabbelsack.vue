@@ -29,7 +29,10 @@ computed: {
 		  },
           anyPlayerIsShown() {
               return this.playerList.list.find(el => el.shown === true) !== undefined
-          }
+          },
+	  lessOrEqualTwo() {
+		return this.playerList.list.length <= 2
+	  }
 	  },
 
 props: ['msg'],
@@ -76,6 +79,7 @@ props: ['msg'],
 		       } else {
 			       alert(addName+" ist bereits vorhanden!")
 		       }
+		       this.$refs.inputName.focus()
 	       },
 
 		modalCallback(player) {
@@ -101,14 +105,14 @@ props: ['msg'],
 <template>
 <div v-if="!showNextOne">
 <div class="my-2 h-9">
-<span><input type="text" placeholder="neuer Name" v-model="newName" class="border rounded p-1"></span>
-<span><button @click="addNameToList(newName)" class="mx-2">Hinzuf&uuml;gen</button></span>
+<span><input type="text" placeholder="neuer Name" v-model="newName" class="border rounded p-1" @keyup.enter.exact="addNameToList(newName)" ref="inputName"></span>
+<span><button @click="addNameToList(newName)" class="mx-2" :disabled="newName === ''">Hinzuf&uuml;gen</button></span>
 </div>
 <ul>
 <li v-for="(player,i) in this.playerList.list" :key="i" class="my-2">{{ player.name }}<button @click="this.playerList.removeIthElement(i)" class="mx-2"><IconTrash class="w-4 h-4"/></button></li>
 </ul>
 <div>
-<button @click="krabbeln">Krabbelsack</button>
+<button @click="krabbeln" :disabled="lessOrEqualTwo">Krabbelsack</button>
 </div>
 <button @click="addDummies()" class="mt-4">Debug: Dummies</button>
 </div>
