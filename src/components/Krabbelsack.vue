@@ -2,6 +2,8 @@
 import Player from './Player.jsx'
 import PlayerList from './PlayerList.jsx'
 import ModalNext from './ModalNext.vue'
+import IconTrash from './icons/IconTrash.vue'
+import IconEye from './icons/IconEye.vue'
 
 export default {
 	data() {
@@ -16,7 +18,9 @@ names: [],
 		}
 	},
 components: {
-  ModalNext
+  ModalNext,
+  IconTrash,
+  IconEye
 },
 
 computed: {
@@ -96,27 +100,25 @@ props: ['msg'],
 
 <template>
 <div v-if="!showNextOne">
-<ul>
-<li v-for="(player,i) in this.playerList.list" :key="i" class="my-2">{{ player.name }}<button @click="this.playerList.removeIthElement(i)" class="mx-2">l&ouml;schen</button></li>
-</ul>
-<!-- <div v-for="(item,i) in names" :key="i">
-<input type="text" placeholder="neuer Name" v-model="names[i]">
-<button @click="deleteName(i)">Name l&ouml;schen</button><br>
-</div>
--->
-<div class="my-2">
+<div class="my-2 h-9">
 <span><input type="text" placeholder="neuer Name" v-model="newName" class="border rounded p-1"></span>
 <span><button @click="addNameToList(newName)" class="mx-2">Hinzuf&uuml;gen</button></span>
 </div>
+<ul>
+<li v-for="(player,i) in this.playerList.list" :key="i" class="my-2">{{ player.name }}<button @click="this.playerList.removeIthElement(i)" class="mx-2"><IconTrash class="w-4 h-4"/></button></li>
+</ul>
 <div>
 <button @click="krabbeln">Krabbelsack</button>
 </div>
 <button @click="addDummies()" class="mt-4">Debug: Dummies</button>
 </div>
 <div v-if="showNextOne">
+<div class="my-2 h-9">
+<h2 class="text-2xl">Ergebnis:</h2>
+</div>
 <ul>
 <li v-for="(player,i) in this.playerList.list" :key="i" class="my-2">
-<span :class="{'bg-red-300': player.seen}">{{ player.name }}</span> <button @click="player.shown=true" :disabled="player.seen === true || anyPlayerIsShown">anschauen</button>
+<span :class="{'bg-red-300': player.seen}">{{ player.name }}</span><button class="mx-2" @click="player.shown=true" :disabled="player.seen === true || anyPlayerIsShown"><IconEye class="w-4 h-4"/></button>
 <ModalNext v-show="player.shown" @changeTo="modalCallback" :player="player" />
 </li>
 </ul>
