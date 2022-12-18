@@ -104,11 +104,11 @@ props: ['msg'],
 
 <template>
 <div v-if="!showNextOne">
-<div class="my-2 h-9">
-<span><input type="text" placeholder="neuer Name" v-model="newName" class="border rounded p-1" @keyup.enter.exact="addNameToList(newName)" ref="inputName"></span>
-<span><button @click="addNameToList(newName)" class="mx-2" :disabled="newName === ''">Hinzuf&uuml;gen</button></span>
+<div class="my-2 flex flex-wrap max-w-full">
+<input type="text" placeholder="neuer Name" v-model="newName" class="border rounded p-1 my-1 max-w-full" @keyup.enter.exact="addNameToList(newName)" ref="inputName">
+<button @click="addNameToList(newName)" class="my-1 mx-2" :disabled="newName === ''">Hinzuf&uuml;gen</button>
 </div>
-<TransitionGroup name="list" tag="ul" class="list-disc list-inside">
+<TransitionGroup name="list" tag="ul" class="list-disc ml-4">
 <li v-for="(player, i) in this.playerList.list" :key="player.name" class="my-2">{{ player.name }}<button @click="this.playerList.removeIthElement(i)" class="mx-2"><IconTrash class="w-4 h-4"/></button></li>
 </TransitionGroup>
 <div class="mt-10">
@@ -117,13 +117,15 @@ props: ['msg'],
 <button @click="addDummies()" class="mt-4">Debug: Dummies</button>
 </div>
 <div v-if="showNextOne">
-<div class="my-2 h-9">
+<div class="my-2">
 <h2 class="text-2xl">Ergebnis:</h2>
 </div>
-<ul class="list-disc list-inside">
+<ul class="list-disc ml-4">
 <li v-for="(player,i) in this.playerList.list" :key="i" class="my-2">
-<span :class="[{'line-through': player.seen}, {'text-gray-400': player.seen}]">{{ player.name }}</span><button class="mx-2" @click="player.shown=true" :disabled="player.seen === true || anyPlayerIsShown"><IconEye class="w-4 h-4"/></button>
+<div class="flex flex-row flex-wrap">
+<div><span :class="[{'line-through': player.seen}, {'text-gray-400': player.seen}]">{{ player.name }}</span><button class="mx-2" @click="player.shown=true" :disabled="player.seen === true || anyPlayerIsShown"><IconEye class="w-4 h-4"/></button></div>
 <ModalNext v-show="player.shown" @changeTo="modalCallback" :player="player" />
+</div>
 </li>
 </ul>
 <div class="mt-10">
