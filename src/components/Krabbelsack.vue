@@ -108,10 +108,10 @@ props: ['msg'],
 <span><input type="text" placeholder="neuer Name" v-model="newName" class="border rounded p-1" @keyup.enter.exact="addNameToList(newName)" ref="inputName"></span>
 <span><button @click="addNameToList(newName)" class="mx-2" :disabled="newName === ''">Hinzuf&uuml;gen</button></span>
 </div>
-<ul>
-<li v-for="(player,i) in this.playerList.list" :key="i" class="my-2">{{ player.name }}<button @click="this.playerList.removeIthElement(i)" class="mx-2"><IconTrash class="w-4 h-4"/></button></li>
-</ul>
-<div>
+<TransitionGroup name="list" tag="ul">
+<li v-for="(player, i) in this.playerList.list" :key="player.name" class="my-2">{{ player.name }}<button @click="this.playerList.removeIthElement(i)" class="mx-2"><IconTrash class="w-4 h-4"/></button></li>
+</TransitionGroup>
+<div class="mt-10">
 <button @click="krabbeln" :disabled="lessOrEqualTwo">Krabbelsack</button>
 </div>
 <button @click="addDummies()" class="mt-4">Debug: Dummies</button>
@@ -133,3 +133,18 @@ props: ['msg'],
 </div>
 </div>
 </template>
+<style>
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  @apply transition-all duration-500;
+}
+
+.list-enter-from,
+.list-leave-to {
+  @apply opacity-0 translate-x-12;
+}
+.list-leave-active {
+  @apply absolute;
+}
+</style>
