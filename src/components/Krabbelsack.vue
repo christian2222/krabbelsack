@@ -108,10 +108,10 @@ props: ['msg'],
 <span><input type="text" placeholder="neuer Name" v-model="newName" class="border rounded p-1" @keyup.enter.exact="addNameToList(newName)" ref="inputName"></span>
 <span><button @click="addNameToList(newName)" class="mx-2" :disabled="newName === ''">Hinzuf&uuml;gen</button></span>
 </div>
-<ul>
-<li v-for="(player,i) in this.playerList.list" :key="i" class="my-2">{{ player.name }}<button @click="this.playerList.removeIthElement(i)" class="mx-2"><IconTrash class="w-4 h-4"/></button></li>
-</ul>
-<div>
+<TransitionGroup name="list" tag="ul" class="list-disc list-inside">
+<li v-for="(player, i) in this.playerList.list" :key="player.name" class="my-2">{{ player.name }}<button @click="this.playerList.removeIthElement(i)" class="mx-2"><IconTrash class="w-4 h-4"/></button></li>
+</TransitionGroup>
+<div class="mt-10">
 <button @click="krabbeln" :disabled="lessOrEqualTwo">Krabbelsack</button>
 </div>
 <button @click="addDummies()" class="mt-4">Debug: Dummies</button>
@@ -120,16 +120,33 @@ props: ['msg'],
 <div class="my-2 h-9">
 <h2 class="text-2xl">Ergebnis:</h2>
 </div>
-<ul>
+<ul class="list-disc list-inside">
 <li v-for="(player,i) in this.playerList.list" :key="i" class="my-2">
-<span :class="{'bg-red-300': player.seen}">{{ player.name }}</span><button class="mx-2" @click="player.shown=true" :disabled="player.seen === true || anyPlayerIsShown"><IconEye class="w-4 h-4"/></button>
+<span :class="[{'line-through': player.seen}, {'text-gray-400': player.seen}]">{{ player.name }}</span><button class="mx-2" @click="player.shown=true" :disabled="player.seen === true || anyPlayerIsShown"><IconEye class="w-4 h-4"/></button>
 <ModalNext v-show="player.shown" @changeTo="modalCallback" :player="player" />
 </li>
 </ul>
+<div class="mt-10">
 <button @click="backToStart()">Zur&uuml;ck</button>
 <div class="mt-4">
 <button @click="showDebug=!showDebug">Debug: Result</button>
 <div v-if="showDebug">{{result}}</div>
 </div>
 </div>
+</div>
 </template>
+<style>
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  @apply transition-all duration-500;
+}
+
+.list-enter-from,
+.list-leave-to {
+  @apply opacity-0 translate-x-12;
+}
+.list-leave-active {
+  @apply absolute;
+}
+</style>
