@@ -21,7 +21,7 @@ methods: {
 
 <template>
 <span>
-{{ player.name }} beschenkt {{ player.next.name }}
-<button @click="changeTo(player)"><IconCheck class="w-4 h-4"/></button>
+{{ player.name }} beschenkt <strong>{{ player.next.name }}</strong>
+<button @click="changeTo(player)" class="mx-2"><IconCheck class="w-4 h-4"/></button>
 </span>
 </template>
