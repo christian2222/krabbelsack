@@ -68,11 +68,11 @@ props: ['msg'],
 		       player.shown = true
 	       },
 
+           clearError() {
+            this.inputError = "";
+            this.$refs.inputName.focus();
+           },
 	       checkForNameError(addName) {
-	       		if(addName === "") {
-			        this.inputError = "Bitte keine leeren Namen"
-				return true
-			}
 			if(this.playerList.containsName(addName)) {
 				this.inputError = "Name bereits vorhanden"
 				return true
@@ -84,7 +84,7 @@ props: ['msg'],
 	       },
 
 	       addNameToList(addName) {
-		       if(!this.checkForNameError(addName)) {
+		       if(addName && !this.checkForNameError(addName)) {
 			       this.playerList.addName(addName)
 				       this.newName = ""
 		       } 
@@ -116,7 +116,10 @@ props: ['msg'],
 <div v-if="!showNextOne">
 <div class="my-2 flex flex-wrap max-w-full">
 <input type="text" placeholder="neuer Name" v-model="newName" class="border rounded p-1 my-1 max-w-full" @keyup.enter.exact="addNameToList(newName)" ref="inputName">
-<button @click="addNameToList(newName)" class="my-1 mx-2" :disabled="checkForNameError(newName)">Hinzuf&uuml;gen</button>{{ inputError }}
+<button @click="addNameToList(newName)" class="my-1 mx-2" :disabled="!newName">Hinzuf&uuml;gen</button>
+</div>
+<div class="rounded border-2 border-red-600 bg-red-300 p-4 w-fit" v-if="inputError">
+Fehler: {{ inputError }} <IconTrash @click="clearError()" class="w-4 h-4 inline"/>
 </div>
 <TransitionGroup name="list" tag="ul" class="list-disc ml-4">
 <li v-for="(player, i) in this.playerList.list" :key="player.name" class="my-2">{{ player.name }}<button @click="this.playerList.removeIthElement(i)" class="mx-2"><IconTrash class="w-4 h-4"/></button></li>

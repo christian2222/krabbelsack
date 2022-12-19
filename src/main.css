@@ -10,6 +10,6 @@
 @import "tailwindcss/utilities";
 
 button { 
-    @apply px-2 py-1 rounded bg-blue-400 hover:bg-blue-200 disabled:bg-gray-200; 
+    @apply px-2 py-1 rounded bg-blue-400 hover:bg-blue-200 disabled:bg-gray-200 text-white; 
 }
 
