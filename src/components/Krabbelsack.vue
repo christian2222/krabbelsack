@@ -12,6 +12,7 @@ names: [],
        newName: "",
        result: "INIT",
        nextOne: "<Nobody>",
+       mode: "INIT",
        showNextOne: false,
        playerList: new PlayerList(),
        showDebug: false,
@@ -56,7 +57,7 @@ props: ['msg'],
 		       } else {
 			       this.result = "Keine Namen eingegeben!"
 		       }
-		       this.showNextOne = true
+		       this.mode = "RUN"
 	       },
 
 	       getNextName(name) {
@@ -103,9 +104,14 @@ props: ['msg'],
 			currentPlayer.next = null
 		},
 
+		askForConfirm() {
+			this.mode = "CONFIRM"
+		},
+
 		backToStart() {
-			this.playerList.list.forEach(this.resetPlayer)
-			this.showNextOne = false
+			//this.playerList.list.forEach(this.resetPlayer)
+			this.playerList = new PlayerList()
+			this.mode = "INIT"
 		}
 
        }
@@ -113,43 +119,53 @@ props: ['msg'],
 </script>
 
 <template>
-<div v-if="!showNextOne">
-<div class="my-2 flex flex-wrap max-w-full">
-<input type="text" placeholder="neuer Name" v-model="newName" class="border rounded p-1 my-1 max-w-full" @keyup.enter.exact="addNameToList(newName)" ref="inputName">
-<button @click="addNameToList(newName)" class="my-1 mx-2" :disabled="!newName">Hinzuf&uuml;gen</button>
+<div v-if="this.mode === 'INIT'">
+	<div class="my-2 flex flex-wrap max-w-full">
+	<input type="text" placeholder="neuer Name" v-model="newName" class="border rounded p-1 my-1 max-w-full" @keyup.enter.exact="addNameToList(newName)" ref="inputName">
+	<button @click="addNameToList(newName)" class="my-1 mx-2" :disabled="!newName">Hinzuf&uuml;gen</button>
+	</div>
+	<div class="rounded border-2 border-red-600 bg-red-300 p-4 w-fit" v-if="inputError">
+	Fehler: {{ inputError }} <IconTrash @click="clearError()" class="w-4 h-4 inline"/>
+	</div>
+	<TransitionGroup name="list" tag="ul" class="list-disc ml-4">
+	<li v-for="(player, i) in this.playerList.list" :key="player.name" class="my-2">{{ player.name }}<button @click="this.playerList.removeIthElement(i)" class="mx-2"><IconTrash class="w-4 h-4"/></button></li>
+	</TransitionGroup>
+	<div class="mt-10">
+	<button @click="krabbeln" :disabled="lessOrEqualTwo">Krabbelsack</button>
+	</div>
+	<button @click="addDummies()" class="mt-4">Debug: Dummies</button>
 </div>
-<div class="rounded border-2 border-red-600 bg-red-300 p-4 w-fit" v-if="inputError">
-Fehler: {{ inputError }} <IconTrash @click="clearError()" class="w-4 h-4 inline"/>
+<div v-if="this.mode === 'RUN'">
+	<div class="my-2">
+	<h2 class="text-2xl">Ergebnis:</h2>
+	</div>
+	<ul class="list-disc ml-4">
+	<li v-for="(player,i) in this.playerList.list" :key="i" class="my-2">
+	<div class="flex flex-row flex-wrap">
+	<div><span :class="[{'line-through': player.seen}, {'text-gray-400': player.seen}]">{{ player.name }}</span><button class="mx-2" @click="player.shown=true" :disabled="player.seen === true || anyPlayerIsShown"><IconEye class="w-4 h-4"/></button></div>
+	<ModalNext v-show="player.shown" @changeTo="modalCallback" :player="player" />
+	</div>
+	</li>
+	</ul>
+	<div class="mt-10">
+	<button @click="askForConfirm()">Zur&uuml;ck</button>
+	<div class="mt-4">
+	<button @click="showDebug=!showDebug">Debug: Result</button>
+	<Transition>
+	<div v-if="showDebug">{{result}}</div>
+	</Transition>
+	</div>
+	</div>
 </div>
-<TransitionGroup name="list" tag="ul" class="list-disc ml-4">
-<li v-for="(player, i) in this.playerList.list" :key="player.name" class="my-2">{{ player.name }}<button @click="this.playerList.removeIthElement(i)" class="mx-2"><IconTrash class="w-4 h-4"/></button></li>
-</TransitionGroup>
-<div class="mt-10">
-<button @click="krabbeln" :disabled="lessOrEqualTwo">Krabbelsack</button>
-</div>
-<button @click="addDummies()" class="mt-4">Debug: Dummies</button>
-</div>
-<div v-if="showNextOne">
-<div class="my-2">
-<h2 class="text-2xl">Ergebnis:</h2>
-</div>
-<ul class="list-disc ml-4">
-<li v-for="(player,i) in this.playerList.list" :key="i" class="my-2">
-<div class="flex flex-row flex-wrap">
-<div><span :class="[{'line-through': player.seen}, {'text-gray-400': player.seen}]">{{ player.name }}</span><button class="mx-2" @click="player.shown=true" :disabled="player.seen === true || anyPlayerIsShown"><IconEye class="w-4 h-4"/></button></div>
-<ModalNext v-show="player.shown" @changeTo="modalCallback" :player="player" />
-</div>
-</li>
-</ul>
-<div class="mt-10">
-<button @click="backToStart()">Zur&uuml;ck</button>
-<div class="mt-4">
-<button @click="showDebug=!showDebug">Debug: Result</button>
-<Transition>
-<div v-if="showDebug">{{result}}</div>
-</Transition>
-</div>
-</div>
+<div v-if="this.mode === 'CONFIRM'">
+	<h2 class="text-2xl">Wirklich zur&uuml;ck?</h2>
+	Hierdurch wird die gesamte Liste gel&ouml;scht!<br>
+	<div class="mt-4">
+	<button @click="backToStart()" >Ja</button>
+	</div>
+	<div class="mt-4">
+	<button @click="this.mode = 'RUN'">Nein</button>
+	</div>
 </div>
 </template>
 <style>
