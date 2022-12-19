@@ -142,7 +142,9 @@ props: ['msg'],
 <button @click="backToStart()">Zur&uuml;ck</button>
 <div class="mt-4">
 <button @click="showDebug=!showDebug">Debug: Result</button>
+<Transition>
 <div v-if="showDebug">{{result}}</div>
+</Transition>
 </div>
 </div>
 </div>
@@ -160,5 +162,14 @@ props: ['msg'],
 }
 .list-leave-active {
   @apply absolute;
+}
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>
