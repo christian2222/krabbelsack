@@ -14,7 +14,8 @@ names: [],
        nextOne: "<Nobody>",
        showNextOne: false,
        playerList: new PlayerList(),
-       showDebug: false
+       showDebug: false,
+       inputError: ""
 		}
 	},
 components: {
@@ -63,22 +64,31 @@ props: ['msg'],
 		       let newOne = "<Nobody>"
 		       let player = this.playerList.getPlayerByName(name)
 		       if( (player != null) && (player.next != null) ) newOne = player.next.name
-		       alert(newOne)
+		       //alert(newOne)
 		       player.shown = true
 	       },
 
+	       checkForNameError(addName) {
+	       		if(addName === "") {
+			        this.inputError = "Bitte keine leeren Namen"
+				return true
+			}
+			if(this.playerList.containsName(addName)) {
+				this.inputError = "Name bereits vorhanden"
+				return true
+			}
+
+			this.inputError = ""
+			return false
+
+	       },
 
 	       addNameToList(addName) {
-		       if(addName === "") {
-			       alert("Keine leerren Namen bitte!")
-				       return
-		       }
-		       if(!this.playerList.containsName(addName)) {
+		       if(!this.checkForNameError(addName)) {
 			       this.playerList.addName(addName)
 				       this.newName = ""
-		       } else {
-			       alert(addName+" ist bereits vorhanden!")
-		       }
+		       } 
+
 		       this.$refs.inputName.focus()
 	       },
 
@@ -106,7 +116,7 @@ props: ['msg'],
 <div v-if="!showNextOne">
 <div class="my-2 flex flex-wrap max-w-full">
 <input type="text" placeholder="neuer Name" v-model="newName" class="border rounded p-1 my-1 max-w-full" @keyup.enter.exact="addNameToList(newName)" ref="inputName">
-<button @click="addNameToList(newName)" class="my-1 mx-2" :disabled="newName === ''">Hinzuf&uuml;gen</button>
+<button @click="addNameToList(newName)" class="my-1 mx-2" :disabled="checkForNameError(newName)">Hinzuf&uuml;gen</button>{{ inputError }}
 </div>
 <TransitionGroup name="list" tag="ul" class="list-disc ml-4">
 <li v-for="(player, i) in this.playerList.list" :key="player.name" class="my-2">{{ player.name }}<button @click="this.playerList.removeIthElement(i)" class="mx-2"><IconTrash class="w-4 h-4"/></button></li>
