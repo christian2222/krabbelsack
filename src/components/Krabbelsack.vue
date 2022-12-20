@@ -70,8 +70,8 @@ props: ['msg'],
 	       },
 
            clearError() {
-            this.inputError = "";
-            this.$refs.inputName.focus();
+            this.inputError = ""
+            this.$refs.inputName.focus()
            },
 	       checkForNameError(addName) {
 			if(this.playerList.containsName(addName)) {
@@ -110,8 +110,10 @@ props: ['msg'],
 
 		backToStart() {
 			//this.playerList.list.forEach(this.resetPlayer)
-			this.playerList = new PlayerList()
 			this.mode = "INIT"
+			this.playerList = new PlayerList()
+            this.newName = ""
+            this.$nextTick(() => { this.clearError() })
 		}
 
        }
@@ -119,9 +121,9 @@ props: ['msg'],
 </script>
 
 <template>
-<div v-if="this.mode === 'INIT'">
+<div v-if="mode === 'INIT'">
 	<div class="my-2 flex flex-wrap max-w-full">
-	<input type="text" placeholder="neuer Name" v-model="newName" class="border rounded p-1 my-1 max-w-full" @keyup.enter.exact="addNameToList(newName)" ref="inputName">
+	<input type="text" placeholder="neuer Name" v-model="newName" class="border rounded p-1 my-1 max-w-full" @keyup.enter.exact="addNameToList(newName)" ref="inputName" autofocus="true">
 	<button @click="addNameToList(newName)" class="my-1 mx-2" :disabled="!newName">Hinzuf&uuml;gen</button>
 	</div>
 	<div class="rounded border-2 border-red-600 bg-red-300 p-4 w-fit" v-if="inputError">
@@ -135,7 +137,7 @@ props: ['msg'],
 	</div>
 	<button @click="addDummies()" class="mt-4">Debug: Dummies</button>
 </div>
-<div v-if="this.mode === 'RUN'">
+<div v-if="mode === 'RUN'">
 	<div class="my-2">
 	<h2 class="text-2xl">Ergebnis:</h2>
 	</div>
@@ -157,14 +159,12 @@ props: ['msg'],
 	</div>
 	</div>
 </div>
-<div v-if="this.mode === 'CONFIRM'">
+<div v-if="mode === 'CONFIRM'" class="text-center">
 	<h2 class="text-2xl">Wirklich zur&uuml;ck?</h2>
 	Hierdurch wird die gesamte Liste gel&ouml;scht!<br>
-	<div class="mt-4">
+	<div class="mt-4 flex justify-center gap-3">
 	<button @click="backToStart()" >Ja</button>
-	</div>
-	<div class="mt-4">
-	<button @click="this.mode = 'RUN'">Nein</button>
+	<button @click="mode = 'RUN'">Nein</button>
 	</div>
 </div>
 </template>
