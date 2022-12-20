@@ -16,7 +16,8 @@ names: [],
        showNextOne: false,
        playerList: new PlayerList(),
        showDebug: false,
-       inputError: ""
+       inputError: "",
+       currentHash: window.location.hash
 		}
 	},
 components: {
@@ -34,8 +35,17 @@ computed: {
           },
 	  lessOrEqualTwo() {
 		return this.playerList.list.length <= 2
-	  }
 	  },
+      isDebugMode() {
+        return this.currentHash === "#debug"
+      }
+	  },
+
+mounted() {
+    window.addEventListener('hashchange', () => {
+		  this.currentHash = window.location.hash
+		})
+  },
 
 props: ['msg'],
 
@@ -135,7 +145,7 @@ props: ['msg'],
 	<div class="mt-10">
 	<button @click="krabbeln" :disabled="lessOrEqualTwo">Krabbelsack</button>
 	</div>
-	<button @click="addDummies()" class="mt-4">Debug: Dummies</button>
+	<button v-if="isDebugMode" @click="addDummies()" class="mt-4">Debug: Dummies</button>
 </div>
 <div v-if="mode === 'RUN'">
 	<div class="my-2">
@@ -145,13 +155,15 @@ props: ['msg'],
 	<li v-for="(player,i) in this.playerList.list" :key="i" class="my-2">
 	<div class="flex flex-row flex-wrap">
 	<div><span :class="[{'line-through': player.seen}, {'text-gray-400': player.seen}]">{{ player.name }}</span><button class="mx-2" @click="player.shown=true" :disabled="player.seen === true || anyPlayerIsShown"><IconEye class="w-4 h-4"/></button></div>
+	<Transition>
 	<ModalNext v-show="player.shown" @changeTo="modalCallback" :player="player" />
+	</Transition>
 	</div>
 	</li>
 	</ul>
 	<div class="mt-10">
 	<button @click="askForConfirm()">Zur&uuml;ck</button>
-	<div class="mt-4">
+	<div class="mt-4" v-if="isDebugMode">
 	<button @click="showDebug=!showDebug">Debug: Result</button>
 	<Transition>
 	<div v-if="showDebug">{{result}}</div>
