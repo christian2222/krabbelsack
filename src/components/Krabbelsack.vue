@@ -1,20 +1,14 @@
 <script>
-import Player from './Player.jsx'
-import PlayerList from './PlayerList.jsx'
 import ModalNext from './ModalNext.vue'
 import IconTrash from './icons/IconTrash.vue'
 import IconEye from './icons/IconEye.vue'
 
 export default {
 	data() {
-		return {
-names: [],
+      return {
        newName: "",
-       result: "INIT",
-       nextOne: "<Nobody>",
        mode: "INIT",
-       showNextOne: false,
-       playerList: new PlayerList(),
+       playerList: [],
        showDebug: false,
        inputError: "",
        currentHash: window.location.hash
@@ -27,14 +21,11 @@ components: {
 },
 
 computed: {
-		  hasNames() {
-			  return this.playerList.hasElements()
-		  },
           anyPlayerIsShown() {
-              return this.playerList.list.find(el => el.shown === true) !== undefined
+              return this.playerList.find(el => el.shown === true) !== undefined
           },
-	  lessOrEqualTwo() {
-		return this.playerList.list.length <= 2
+	  hasMinimumPlayerCount() {
+		return this.playerList.length >= 3
 	  },
       isDebugMode() {
         return this.currentHash === "#debug"
@@ -52,39 +43,45 @@ props: ['msg'],
        methods: {
 
 	       addDummies() {
-                 this.playerList.addName("ich")
-	//	 this.playerList.setReadByName("ich",true)
-                 this.playerList.addName("du")
-                 this.playerList.addName("er")
-                 this.playerList.addName("sie")
-	//	 this.playerList.setReadByName("sie",true)
-                 this.playerList.addName("es")
+                 this.playerList.push({name: "ich", shown: false, seen: false, next: ""})
+                 this.playerList.push({name: "du", shown: false, seen: false, next: ""})
+                 this.playerList.push({name: "er", shown: false, seen: false, next: ""})
+                 this.playerList.push({name: "sie", shown: false, seen: false, next: ""})
+                 this.playerList.push({name: "es", shown: false, seen: false, next: ""})
 	       },
 
 	       krabbeln() {
-		       if(this.playerList.hasElements()) {
-				       this.result = this.playerList.createSchenkung(this.playerList.createPermutedList())
-		       } else {
-			       this.result = "Keine Namen eingegeben!"
-		       }
-		       this.mode = "RUN"
-	       },
+               if(!this.hasMinimumPlayerCount) {
+                this.inputError = "Nicht genug Personen (mindestens 3)!"
+                return
+                }
+                const playerNames = this.playerList.map(el => el.name)
+                for(let i in this.playerList) {
+                    let nextPlayerId = Math.floor(Math.random() * playerNames.length)
+                    if(playerNames.length > 2) {
+                        if(this.playerList[i].name === playerNames[nextPlayerId]) {
+                            nextPlayerId += (nextPlayerId < playerNames.length-1) ? 1 : -1
+                        }
+                    }
+                    else if(playerNames.length===2) {
+                        let otherNextPlayerId = nextPlayerId === 0 ? 1 : 0
+                        if(this.playerList[i].name === playerNames[nextPlayerId] || this.playerList[parseInt(i)+1].name === playerNames[otherNextPlayerId]) {
+                             nextPlayerId = otherNextPlayerId
+                        }
+                    }
+                    this.playerList[i].next = playerNames[nextPlayerId]
+                    playerNames.splice(nextPlayerId,1)
+                }
 
-	       getNextName(name) {
-		       let j = 0
-		       let newOne = "<Nobody>"
-		       let player = this.playerList.getPlayerByName(name)
-		       if( (player != null) && (player.next != null) ) newOne = player.next.name
-		       //alert(newOne)
-		       player.shown = true
+		       this.mode = "RUN"
 	       },
 
            clearError() {
             this.inputError = ""
             this.$refs.inputName.focus()
            },
-	       checkForNameError(addName) {
-			if(this.playerList.containsName(addName)) {
+	       checkForNameError(name) {
+			if(this.playerList.find(el => el.name === name) !== undefined)  {
 				this.inputError = "Name bereits vorhanden"
 				return true
 			}
@@ -94,9 +91,9 @@ props: ['msg'],
 
 	       },
 
-	       addNameToList(addName) {
-		       if(addName && !this.checkForNameError(addName)) {
-			       this.playerList.addName(addName)
+	       addNameToList(name) {
+		       if(name && !this.checkForNameError(name)) {
+			       this.playerList.push({name: name, shown: false, seen: false, next: ""})
 				       this.newName = ""
 		       } 
 
@@ -121,7 +118,7 @@ props: ['msg'],
 		backToStart() {
 			//this.playerList.list.forEach(this.resetPlayer)
 			this.mode = "INIT"
-			this.playerList = new PlayerList()
+			this.playerList = []
             this.newName = ""
             this.$nextTick(() => { this.clearError() })
 		}
@@ -133,17 +130,17 @@ props: ['msg'],
 <template>
 <div v-if="mode === 'INIT'">
 	<div class="my-2 flex flex-wrap max-w-full">
-	<input type="text" placeholder="neuer Name" v-model="newName" class="border rounded p-1 my-1 max-w-full" @keyup.enter.exact="addNameToList(newName)" ref="inputName" autofocus="true">
+	<input type="text" placeholder="neuer Name" v-model.trim="newName" class="border rounded p-1 my-1 max-w-full" @keyup.enter.exact="addNameToList(newName)" ref="inputName" autofocus="true">
 	<button @click="addNameToList(newName)" class="my-1 mx-2" :disabled="!newName">Hinzuf&uuml;gen</button>
 	</div>
 	<div class="rounded border-2 border-red-600 bg-red-300 p-4 w-fit" v-if="inputError">
 	Fehler: {{ inputError }} <IconTrash @click="clearError()" class="w-4 h-4 inline"/>
 	</div>
 	<TransitionGroup name="list" tag="ul" class="list-disc ml-4">
-	<li v-for="(player, i) in this.playerList.list" :key="player.name" class="my-2">{{ player.name }}<button @click="this.playerList.removeIthElement(i)" class="mx-2"><IconTrash class="w-4 h-4"/></button></li>
+	<li v-for="(player, i) in playerList" :key="player.name" class="my-2">{{ player.name }}<button @click="playerList.splice(i,1)" class="mx-2"><IconTrash class="w-4 h-4"/></button></li>
 	</TransitionGroup>
 	<div class="mt-10">
-	<button @click="krabbeln" :disabled="lessOrEqualTwo">Krabbelsack</button>
+	<button @click="krabbeln" :disabled="!hasMinimumPlayerCount">Krabbelsack</button>
 	</div>
 	<button v-if="isDebugMode" @click="addDummies()" class="mt-4">Debug: Dummies</button>
 </div>
@@ -152,7 +149,7 @@ props: ['msg'],
 	<h2 class="text-2xl">Ergebnis:</h2>
 	</div>
 	<ul class="list-disc ml-4">
-	<li v-for="(player,i) in this.playerList.list" :key="i" class="my-2">
+	<li v-for="(player,i) in playerList" :key="i" class="my-2">
 	<div class="flex flex-row flex-wrap">
 	<div><span :class="[{'line-through': player.seen}, {'text-gray-400': player.seen}]">{{ player.name }}</span><button class="mx-2" @click="player.shown=true" :disabled="player.seen === true || anyPlayerIsShown"><IconEye class="w-4 h-4"/></button></div>
 	<Transition>
@@ -166,7 +163,7 @@ props: ['msg'],
 	<div class="mt-4" v-if="isDebugMode">
 	<button @click="showDebug=!showDebug">Debug: Result</button>
 	<Transition>
-	<div v-if="showDebug">{{result}}</div>
+	<div v-if="showDebug">{{playerList.map(el => el.name + ' => ' + el.next).join(", ") }}</div>
 	</Transition>
 	</div>
 	</div>
